@@ -194,7 +194,8 @@ struct Workspace: Sendable {
         let lowerNeedle = needle.lowercased()
         for case let fileURL as URL in enumerator {
             if hits.count >= 200 { break }
-            guard (try? fileURL.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true else { continue }
+            let values = try? fileURL.resourceValues(forKeys: [.isRegularFileKey])
+            guard values?.isRegularFile == true else { continue }
             guard let text = try? String(contentsOf: fileURL, encoding: .utf8) else { continue }
             for (index, line) in text.components(separatedBy: .newlines).enumerated() {
                 if line.lowercased().contains(lowerNeedle) {

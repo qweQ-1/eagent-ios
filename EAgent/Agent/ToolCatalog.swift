@@ -1,8 +1,8 @@
 import Foundation
 
 /// 一个工具的元信息：名字、给模型看的用法、危险等级。
-struct ToolSpec {
-    enum Risk {
+struct ToolSpec: Equatable {
+    enum Risk: Equatable {
         /// 只读，不改任何东西
         case readonly
         /// 会写入/删除/对外发送，需要用户确认
@@ -76,7 +76,7 @@ enum ToolCatalog {
                  risk: .mutating),
         ToolSpec(name: "screenshot",
                  usage: #"{"tool":"screenshot","args":{"note":"给这张截图的说明（可留空）"}}"#,
-                 risk: .readonly),
+                 risk: .mutating),
         ToolSpec(name: "http_get",
                  usage: #"{"tool":"http_get","args":{"url":"https://...","max_bytes":"12000（可留空）"}}"#,
                  risk: .readonly),

@@ -189,7 +189,7 @@ final class SpeechCenter {
 
 /// 一次性定位请求
 @MainActor
-final class LocationProvider: NSObject, CLLocationManagerDelegate {
+final class LocationProvider: NSObject, @preconcurrency CLLocationManagerDelegate {
     enum Outcome {
         case success(CLLocation)
         case failure(String)
@@ -217,7 +217,7 @@ final class LocationProvider: NSObject, CLLocationManagerDelegate {
             self.continuation = continuation
             Task { [weak self] in
                 try? await Task.sleep(nanoseconds: 15_000_000_000)
-                self?.finish(.failure("定位超时。"))
+                await self?.finish(.failure("定位超时。"))
             }
         }
     }

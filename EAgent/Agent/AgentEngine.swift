@@ -34,7 +34,7 @@ struct AgentMessage: Identifiable, Equatable {
 }
 
 /// 待用户确认的一次工具调用。
-final class ToolApprovalRequest: Identifiable {
+final class ToolApprovalRequest: Identifiable, Equatable {
     let id = UUID()
     let call: ToolCall
     let spec: ToolSpec
@@ -43,6 +43,10 @@ final class ToolApprovalRequest: Identifiable {
     init(call: ToolCall, spec: ToolSpec) {
         self.call = call
         self.spec = spec
+    }
+
+    static func == (lhs: ToolApprovalRequest, rhs: ToolApprovalRequest) -> Bool {
+        lhs.id == rhs.id
     }
 }
 
@@ -80,7 +84,9 @@ final class AgentEngine: ObservableObject {
     private var executor: ToolExecutor
 
     /// 依赖注入，方便测试
-    var upstreamHandler: ((String) async throws -> (text: String, thinking: String, messageID: String?))?
+    var upstreamHandler: (@MainActor (String) async throws -> (text: String, thinking: String, messageID: String?))?
+    /// 分享工具的呈现方式（由 UI 层注入）
+    var shareHandler: (@MainActor (String, String?) async -> Bool)?
 
     init(settings: AppSettings) {
         let workspace = Workspace(folderName: settings.workspaceFolder)

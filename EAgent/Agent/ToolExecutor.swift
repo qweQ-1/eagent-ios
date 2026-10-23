@@ -27,9 +27,9 @@ final class ToolExecutor {
     /// 只读工具是否自动执行
     var autoApproveReadOnly: Bool
     /// 需要确认时调用它（由 UI 层提供，会挂起等待用户点「允许 / 拒绝」）
-    var approvalHandler: ((ToolCall) async -> Bool)?
+    var approvalHandler: (@MainActor (ToolCall) async -> Bool)?
     /// 呈现系统分享面板
-    var sharePresenter: ((String, String?) async -> Bool)?
+    var sharePresenter: (@MainActor (String, String?) async -> Bool)?
 
     init(workspace: Workspace, autoApproveReadOnly: Bool = true) {
         self.workspace = workspace

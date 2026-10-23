@@ -42,6 +42,6 @@ final class ToolCatalogTests: XCTestCase {
                                              maxSteps: 3)
         XCTAssertTrue(prompt.contains("回答一律用中文"))
         XCTAssertTrue(prompt.contains("所有工具在执行前都要用户确认"))
-        XCTAssertTrue(prompt.contains("3"))
+        XCTAssertTrue(prompt.contains("连续调用 3 轮工具"))
     }
 }

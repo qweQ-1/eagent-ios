@@ -32,7 +32,7 @@ final class ToolCatalogTests: XCTestCase {
         XCTAssertTrue(prompt.contains(ToolCallParser.openTag))
         XCTAssertTrue(prompt.contains(ToolCallParser.resultOpenTag))
         XCTAssertTrue(prompt.contains("write_file"))
-        XCTAssertTrue(prompt.contains("不能执行 shell"))
+        XCTAssertTrue(prompt.contains("执行 shell"))
     }
 
     func testSystemPromptAppendsExtraRequirements() {

@@ -134,7 +134,7 @@ enum DeviceTools {
         lines.append("设备型号：\(device.model)")
         lines.append("系统：\(device.systemName) \(device.systemVersion)")
         lines.append("设备名：\(device.name)")
-        lines.append("语言/区域：\(Locale.preferredLanguages.first ?? "未知") / \(Locale.current.regionCode ?? "-")")
+        lines.append("语言/区域：\(Locale.preferredLanguages.first ?? "未知") / \(Locale.current.region?.identifier ?? "-")")
         let free = (try? URL(fileURLWithPath: NSHomeDirectory()).resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey]))?
             .volumeAvailableCapacityForImportantUsage
         if let free {
@@ -217,7 +217,7 @@ final class LocationProvider: NSObject, @preconcurrency CLLocationManagerDelegat
             self.continuation = continuation
             Task { [weak self] in
                 try? await Task.sleep(nanoseconds: 15_000_000_000)
-                await self?.finish(.failure("定位超时。"))
+                self?.finish(.failure("定位超时。"))
             }
         }
     }

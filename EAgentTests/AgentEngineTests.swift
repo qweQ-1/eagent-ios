@@ -175,7 +175,8 @@ final class AgentEngineTests: XCTestCase {
         }
 
         engine.send("你好", settings: settings)
-        try await waitUntil { !engine.status.isBusy && engine.turnCount == 1 }
+        // 等上游真的被调用过再断言，否则会读到还没填好的 prompt
+        try await waitUntil { !firstPrompt.isEmpty && !engine.status.isBusy }
 
         XCTAssertTrue(firstPrompt.contains("<iagent-tool>"))
         XCTAssertTrue(firstPrompt.contains("list_files"))

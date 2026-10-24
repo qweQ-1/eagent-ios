@@ -44,6 +44,8 @@ struct Workspace: Sendable {
     /// 把相对路径解析成绝对 URL，越界返回 nil
     func resolve(_ relativePath: String) -> URL? {
         let trimmed = relativePath.trimmingCharacters(in: .whitespacesAndNewlines)
+        // 只接受工作区内的相对路径，绝对路径一律拒绝
+        if trimmed.hasPrefix("/") { return nil }
         let candidate = trimmed.isEmpty ? root : root.appendingPathComponent(trimmed)
         let standardized = candidate.standardizedFileURL
         let rootPath = root.standardizedFileURL.path

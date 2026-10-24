@@ -1,8 +1,10 @@
 # 自定义工作流：打一个不签名的 IPA，供 AltStore / Sideloadly / 轻松签 等工具用免费 Apple ID 自签安装。
-# 触发：手动运行（Actions → Unsigned IPA → Run workflow）。
+# 触发：推 main 自动构建（也可以在 Actions → Unsigned IPA → Run workflow 手动跑）。
 name: Unsigned IPA
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:

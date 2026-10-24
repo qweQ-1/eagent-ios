@@ -4,7 +4,6 @@ import SwiftUI
 struct AgentChatView: View {
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var engine: AgentEngine
-    @EnvironmentObject private var shareBroker: ShareBroker
 
     @State private var input: String = ""
     @FocusState private var inputFocused: Bool
@@ -52,18 +51,6 @@ struct AgentChatView: View {
                     engine.resolveApproval(id: request.id, approved: approved)
                 }
                 .presentationDetents([.medium, .large])
-            }
-            .sheet(item: $shareBroker.payload) { payload in
-                ActivityShareView(items: shareItems(for: payload)) { completed in
-                    shareBroker.finish(completed)
-                }
-            }
-            .onAppear {
-                engine.shareHandler = { [weak shareBroker] text, path in
-                    guard let shareBroker else { return false }
-                    let url = path.flatMap { Workspace().resolve($0) }
-                    return await shareBroker.present(text: text, fileURL: url)
-                }
             }
         }
     }
@@ -200,14 +187,6 @@ struct AgentChatView: View {
         input = ""
         inputFocused = false
         engine.send(text, settings: store.settings)
-    }
-
-    private func shareItems(for payload: ShareBroker.Payload) -> [Any] {
-        var items: [Any] = []
-        if !payload.text.isEmpty { items.append(payload.text) }
-        if let url = payload.fileURL { items.append(url) }
-        if items.isEmpty { items.append("iAgent") }
-        return items
     }
 }
 

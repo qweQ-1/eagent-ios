@@ -4,6 +4,7 @@ import SwiftUI
 struct RootView: View {
     @EnvironmentObject private var store: AppStore
     @EnvironmentObject private var engine: AgentEngine
+    @EnvironmentObject private var shareBroker: ShareBroker
 
     var body: some View {
         TabView {
@@ -20,6 +21,25 @@ struct RootView: View {
                 .tabItem { Label("日志", systemImage: "list.bullet.rectangle") }
         }
         .tint(.accentColor)
+        .sheet(item: $shareBroker.payload) { payload in
+            ActivityShareView(items: shareItems(for: payload)) { completed in
+                shareBroker.finish(completed)
+            }
+        }
+        .onAppear {
+            let broker = shareBroker
+            engine.shareHandler = { text, fileURL in
+                await broker.present(text: text, fileURL: fileURL)
+            }
+        }
+    }
+
+    private func shareItems(for payload: ShareBroker.Payload) -> [Any] {
+        var items: [Any] = []
+        if !payload.text.isEmpty { items.append(payload.text) }
+        if let url = payload.fileURL { items.append(url) }
+        if items.isEmpty { items.append("iAgent") }
+        return items
     }
 }
 

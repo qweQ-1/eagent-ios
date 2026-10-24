@@ -4,6 +4,7 @@ import QuickLook
 /// 工作区：查看 AI 能碰到的那些文件（Documents/AgentWorkspace）。
 struct WorkspaceView: View {
     @EnvironmentObject private var store: AppStore
+    @EnvironmentObject private var shareBroker: ShareBroker
     @State private var path: String = ""
     @State private var entries: [Workspace.Entry] = []
     @State private var errorText: String?
@@ -151,7 +152,9 @@ struct WorkspaceView: View {
     }
 
     private func shareFolder() {
-        Task { _ = await shareBroker.present(text: "iAgent 工作区：\(workspace.root.path)", fileURL: workspace.root) }
+        // 先把 broker 取出来再用，避免在 Task 里回头访问 EnvironmentObject
+        let broker = shareBroker
+        Task { _ = await broker.present(text: "iAgent 工作区：\(workspace.root.path)", fileURL: workspace.root) }
     }
 }
 

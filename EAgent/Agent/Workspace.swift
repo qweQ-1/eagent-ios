@@ -130,7 +130,7 @@ struct Workspace: Sendable {
             .map { item in
                 let values = try? item.resourceValues(forKeys: Set(keys))
                 return Entry(name: item.lastPathComponent,
-                             path: relativePath(of: item),
+                             path: self.relativePath(of: item),
                              isDirectory: values?.isDirectory ?? false,
                              size: values?.fileSize ?? 0,
                              modified: values?.contentModificationDate)
@@ -199,7 +199,7 @@ struct Workspace: Sendable {
             guard let text = try? String(contentsOf: fileURL, encoding: .utf8) else { continue }
             for (index, line) in text.components(separatedBy: .newlines).enumerated() {
                 if line.lowercased().contains(lowerNeedle) {
-                    hits.append(Hit(path: relativePath(of: fileURL),
+                    hits.append(Hit(path: self.relativePath(of: fileURL),
                                     line: index + 1,
                                     preview: String(line.prefix(200))))
                     break

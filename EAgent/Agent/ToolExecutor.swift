@@ -28,8 +28,8 @@ final class ToolExecutor {
     var autoApproveReadOnly: Bool
     /// 需要确认时调用它（由 UI 层提供，会挂起等待用户点「允许 / 拒绝」）
     var approvalHandler: (@MainActor (ToolCall) async -> Bool)?
-    /// 呈现系统分享面板
-    var sharePresenter: (@MainActor (String, String?) async -> Bool)?
+    /// 呈现系统分享面板（文字 + 可选文件 URL）
+    var sharePresenter: (@MainActor (String, URL?) async -> Bool)?
 
     init(workspace: Workspace, autoApproveReadOnly: Bool = true) {
         self.workspace = workspace
@@ -103,7 +103,19 @@ final class ToolExecutor {
             guard let presenter else {
                 return .failure("当前没有可用的分享面板。")
             }
-            return await presenter(call.string("text"), call.string("path").isEmpty ? nil : call.string("path"))
+            // 路径按当前工作区解析，越界直接拒绝
+            var fileURL: URL?
+            let rawPath = call.string("path").trimmingCharacters(in: .whitespacesAndNewlines)
+            if !rawPath.isEmpty {
+                guard let resolved = workspace.resolve(rawPath) else {
+                    return .failure("路径「\(rawPath)」超出了工作区范围。")
+                }
+                fileURL = resolved
+            }
+            let completed = await presenter(call.string("text"), fileURL)
+            return completed
+                ? ToolResult(ok: true, summary: "已调起系统分享面板。")
+                : ToolResult(ok: false, summary: "用户取消了分享。")
 
         case "http_get":
             return try await NetworkTools.get(call: call)

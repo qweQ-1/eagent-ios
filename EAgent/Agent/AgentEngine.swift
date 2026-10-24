@@ -96,9 +96,9 @@ final class AgentEngine: ObservableObject {
         executor.approvalHandler = { [weak self] call in
             await self?.requestApproval(call) ?? false
         }
-        executor.sharePresenter = { [weak self] text, path in
+        executor.sharePresenter = { [weak self] text, fileURL in
             guard let handler = self?.shareHandler else { return false }
-            return await handler(text, path)
+            return await handler(text, fileURL)
         }
     }
 

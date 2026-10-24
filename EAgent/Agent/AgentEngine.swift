@@ -86,7 +86,7 @@ final class AgentEngine: ObservableObject {
     /// 依赖注入，方便测试
     var upstreamHandler: (@MainActor (String) async throws -> (text: String, thinking: String, messageID: String?))?
     /// 分享工具的呈现方式（由 UI 层注入）
-    var shareHandler: (@MainActor (String, String?) async -> Bool)?
+    var shareHandler: (@MainActor (String, URL?) async -> Bool)?
 
     init(settings: AppSettings) {
         let workspace = Workspace(folderName: settings.workspaceFolder)
@@ -178,7 +178,7 @@ final class AgentEngine: ObservableObject {
         var isFirstTurn = true
         let maxSteps = max(1, settings.maxToolSteps)
 
-        for step in 0..<maxSteps {
+        for _ in 0..<maxSteps {
             if Task.isCancelled { return }
 
             // 防封号的随机延迟

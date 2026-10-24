@@ -118,14 +118,15 @@ enum CalendarTools {
 
     private static func requestCalendarAccess(store: EKEventStore) async -> Bool {
         let status = EKEventStore.authorizationStatus(for: .event)
-        if status == .fullAccess || status == .authorized { return true }
+        // 写入日历只要 fullAccess 或 writeOnly 即可
+        if status == .fullAccess || status == .writeOnly { return true }
         if status == .denied || status == .restricted { return false }
         return (try? await store.requestFullAccessToEvents()) ?? false
     }
 
     private static func requestReminderAccess(store: EKEventStore) async -> Bool {
         let status = EKEventStore.authorizationStatus(for: .reminder)
-        if status == .fullAccess || status == .authorized { return true }
+        if status == .fullAccess { return true }
         if status == .denied || status == .restricted { return false }
         return (try? await store.requestFullAccessToReminders()) ?? false
     }
